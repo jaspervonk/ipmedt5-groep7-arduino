@@ -2,4 +2,4 @@ Put an "x" behind your name and push this change:
 Jasper	: x
 Max	:
 Burak	:
-Hasan	:
+Hasan	: x
