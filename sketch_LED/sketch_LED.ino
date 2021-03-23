@@ -29,6 +29,7 @@ void setup() {
   display.setBacklight(100);
   display.clear();
   display.print("BOOT");
+  Serial.println("e");
   delay(1000);
 }
 
