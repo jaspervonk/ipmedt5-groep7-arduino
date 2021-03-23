@@ -59,6 +59,7 @@ void start_stop(){
   if (gestart == false){
     gestart = true;
     display.print("STAR");
+    Serial.println("s");
     delay(1000);
 
     while (true){
@@ -74,7 +75,7 @@ void start_stop(){
         }
 
     if (!digitalRead(BUTTON_PAUZE)){
-      delay(200);
+      delay(10);
       if (!digitalRead(BUTTON_PAUZE)) {
         totaal_gewerkt = totaal_gewerkt + werk_tijd;
         werk_tijd = 0;
@@ -85,7 +86,7 @@ void start_stop(){
 
 
       else if (!digitalRead(BUTTON_START_STOP)){
-      delay(200);
+      delay(10);
       if (!digitalRead(BUTTON_START_STOP)) {
 //        Serial.println("stop de hele app");
         break;
@@ -96,6 +97,7 @@ void start_stop(){
    
     gestart = false;
     display.print("stop");
+    Serial.println("e");
     delay(1000);    
 }
 
@@ -107,6 +109,7 @@ void pauze(){
   if (gestart == true && gepauzeerd == false){
     gepauzeerd = true;
     display.print("PAUS");
+    Serial.println("p");
     delay(1000);
     
     while (true){
@@ -129,6 +132,7 @@ void pauze(){
         pauze_tijd = 0;
         gepauzeerd = false;
         display.print("HERV");
+        Serial.println("r");
         delay(1000);
         break;
         }        
