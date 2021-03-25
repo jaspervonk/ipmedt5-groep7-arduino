@@ -1,12 +1,15 @@
 // Pin Setup
-const int target1 = 19; // A0
-const int target2 = 20; // A1
+const int blackTarget = A0;
+const int blackLED = A5;
+
+const int whiteTarget = A1;
+const int whiteLED = A4;
 
 // Game Rules
 const int targetGoal = 5;
-const int targetSpeed = 5;
-const int targetTimeBuffer = 1000;
-const int targetTreshhold = 330;
+const int targetSpeed = 1000;
+const int targetTimeBuffer = 50;
+const int targetTreshhold = 700;
 
 // Game Scores
 int targetHits = 0;
@@ -25,8 +28,11 @@ int targetValue = 0;
 
 void setup() {
   Serial.begin(9600);
-  pinMode(target1, INPUT);
-  pinMode(target2, INPUT);
+  pinMode(blackTarget, INPUT);
+  pinMode(blackLED, OUTPUT);
+  
+  pinMode(whiteTarget, INPUT);
+  pinMode(whiteLED, OUTPUT);
 }
 
 void loop() {
@@ -36,8 +42,8 @@ void loop() {
     Serial.println("===== TARGET SELECTED =====\nTarget " + String(selectedTarget) + " has been selected");
   
     // Calculate the amount of time the target is active
-    targetTime = targetSpeed*1000;
-    Serial.println("targetTime at the start " + String(targetTime));
+    targetTime = targetSpeed;
+    Serial.println("targetTime reset to " + String(targetTime));
   
     // While there is time left on the current target  
     while(targetTime > 0){
@@ -45,10 +51,12 @@ void loop() {
         
       // Read the Value of the selectedTarget
       if(selectedTarget == 1){
-        targetValue = analogRead(target1);
+        targetValue = analogRead(blackTarget);
+        digitalWrite(blackLED, HIGH);
       }
       if(selectedTarget == 2){
-        targetValue = analogRead(target2);
+        targetValue = analogRead(whiteTarget);
+        digitalWrite(whiteLED, HIGH);
       }
   
       // Show the targetValue
@@ -80,7 +88,9 @@ void loop() {
     Serial.println("Targets missed: " + String(targetMisses));
 
     // Wait
-    Serial.println();
+    Serial.println("\nClearing all LED's\n");
+    digitalWrite(blackLED, LOW);
+    digitalWrite(whiteLED, LOW);
     delay(3000);
   }
 
