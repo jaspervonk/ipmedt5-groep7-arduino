@@ -6,6 +6,7 @@ const int DISPLAY_DIO = 2;
 const int BUTTON_START_STOP = 12;
 const int BUTTON_PAUZE = 11;
 
+const int BUZZER = 13;
 
 bool gestart = false;
 bool gepauzeerd = false;
@@ -14,6 +15,11 @@ int totaal_gepauzeerd = 0;
 
 int werk_tijd = 0;
 int pauze_tijd = 0;
+
+int max_werk_tijd_minuten = 120;
+int max_pauze_tijd_minuten = 15;
+int max_werk_tijd = max_werk_tijd_minuten * 60;
+int max_pauze_tijd = max_pauze_tijd_minuten * 60;
 
 
 float startms = 0;
@@ -24,6 +30,7 @@ void setup() {
   Serial.begin(9600);
   pinMode(BUTTON_START_STOP, INPUT_PULLUP);
   pinMode(BUTTON_PAUZE, INPUT_PULLUP);
+  pinMode(BUZZER, OUTPUT);
   
   display.begin();
   display.setBacklight(100);
@@ -61,7 +68,9 @@ void start_stop(){
     gestart = true;
     display.print("STAR");
     Serial.println("s");
+    digitalWrite(BUZZER, HIGH);
     delay(1000);
+    digitalWrite(BUZZER, LOW);
 
     while (true){
 //      Serial.println("in de start_stop");
@@ -71,6 +80,11 @@ void start_stop(){
           werk_tijd = werk_tijd + 1;
 //          Serial.println(werk_tijd);
           bereken_minuten(werk_tijd);
+
+          if (werk_tijd == max_werk_tijd){
+            Serial.println("gp");
+            digitalWrite(BUZZER, HIGH);
+            }
           break;
           }
         }
@@ -80,6 +94,7 @@ void start_stop(){
       if (!digitalRead(BUTTON_PAUZE)) {
         totaal_gewerkt = totaal_gewerkt + werk_tijd;
         werk_tijd = 0;
+        digitalWrite(BUZZER, LOW);
         pauze(); /////// pauze()
 //        break;
         }        
@@ -119,8 +134,12 @@ void pauze(){
       while (true){        
         if (millis() >= (startms + 1000)){
           pauze_tijd = pauze_tijd + 1;
-
           bereken_minuten(pauze_tijd);
+
+          if (pauze_tijd == max_pauze_tijd){
+            Serial.println("gw");
+            digitalWrite(BUZZER, HIGH);
+            }
           break;
           }
         }
@@ -131,6 +150,7 @@ void pauze(){
       if (!digitalRead(BUTTON_PAUZE)) {
         totaal_gepauzeerd = totaal_gepauzeerd + werk_tijd;
         pauze_tijd = 0;
+        digitalWrite(BUZZER, LOW);
         gepauzeerd = false;
         display.print("HERV");
         Serial.println("r");
