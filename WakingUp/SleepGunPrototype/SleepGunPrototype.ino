@@ -2,6 +2,8 @@
 #include <LiquidCrystal_I2C.h>
 
 // Pin Setup
+const int unconnectedPin = A7;
+
 const int blackTarget = A0;
 const int blackLED = A3;
 
@@ -32,10 +34,13 @@ const String targetString = "target";
 int selectedTarget = 0;
 int targetTime = 0;
 int targetValue = 0;
+boolean targetRunning = true;
 
 
 void setup() {
   Serial.begin(9600);
+
+  randomSeed(analogRead(A7));
 
   pinMode(blackTarget, INPUT);
   pinMode(blackLED, OUTPUT);
@@ -138,14 +143,14 @@ void loop() {
     
   }
 
-  // Calculate Scores
-  targetTotal = targetHits + targetMisses;
-  
-  targetAccuracy = targetHits/targetTotal;
-  targetReactionTime = totalTime/targetTotal;
-
   // = LCD Feedback =
-  while(true){
+  while(targetRunning){ 
+    // Calculate Scores
+    targetTotal = targetHits + targetMisses;
+    
+    targetAccuracy = targetHits/targetTotal;
+    targetReactionTime = totalTime/targetTotal;
+  
     lcd.clear();
     lcd.setCursor(3,0);
     lcd.print("Good Morning!");
@@ -160,30 +165,30 @@ void loop() {
     delay(1000);
     lcd.print(".");
     delay(3000);
+
+    // = LCD Feedback =
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("Targets Hit: " + String(targetHits));
+    lcd.setCursor(0,1);
+    lcd.print("Targets Missed: " + String(targetMisses));
+    lcd.setCursor(0,2);
+    lcd.print("Accuracy: " + String(targetAccuracy*100) + "%");
+    lcd.setCursor(0,3);
+    lcd.print("Draw Time: " + String(targetReactionTime) + "ms");
+    
+    Serial.println("===== GOOD MORNING!=====\nThe targetGoal has been reached! :)\nBEEP BEEP BEEP BEEP BEEP BEEP BEEP BEEP BEEP BEEP");
+    Serial.println();
+    Serial.println("Here are your results:");
+    Serial.println("Targets Total: " + String(targetTotal));
+    Serial.println("Targets Hit: " + String(targetHits));
+    Serial.println("Targets Missed: " + String(targetMisses));
+    Serial.println("Target Accuracy: " + String(targetAccuracy*100) + "%");
+    Serial.println();
+    Serial.println("Total Time: " + String(totalTime/1000) + "s");
+    Serial.println("Reaction Time: " + String(targetReactionTime) + "ms");
+    Serial.println();
+    targetRunning = false;
     break;
   }
-  
-  // = LCD Feedback =
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.print("Targets Hit: " + String(targetHits));
-  lcd.setCursor(0,1);
-  lcd.print("Targets Missed: " + String(targetMisses));
-  lcd.setCursor(0,2);
-  lcd.print("Accuracy: " + String(targetAccuracy*100) + "%");
-  lcd.setCursor(0,3);
-  lcd.print("Draw Time: " + String(targetReactionTime) + "ms");
-  
-  Serial.println("===== GOOD MORNING!=====\nThe targetGoal has been reached! :)\nBEEP BEEP BEEP BEEP BEEP BEEP BEEP BEEP BEEP BEEP");
-  Serial.println();
-  Serial.println("Here are your results:");
-  Serial.println("Targets Total: " + String(targetTotal));
-  Serial.println("Targets Hit: " + String(targetHits));
-  Serial.println("Targets Missed: " + String(targetMisses));
-  Serial.println("Target Accuracy: " + String(targetAccuracy*100) + "%");
-  Serial.println();
-  Serial.println("Total Time: " + String(totalTime/1000) + "s");
-  Serial.println("Reaction Time: " + String(targetReactionTime) + "ms");
-  Serial.println();
-  delay(60000);
 }
