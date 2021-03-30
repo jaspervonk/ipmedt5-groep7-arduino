@@ -13,9 +13,9 @@ bool gepauzeerd = false;
 int totaal_gewerkt = 0;
 int totaal_gepauzeerd = 0;
 
-String string_totaal_gewerkt = "";
-String string_totaal_gepauzeerd = "";
-String tijd_upload = "";
+String string_totaal_gewerkt = "0";
+String string_totaal_gepauzeerd = "0";
+String tijd_upload = "0";
 
 int werk_tijd = 0;
 int pauze_tijd = 0;
@@ -109,6 +109,7 @@ void start_stop(){
       delay(10);
       if (!digitalRead(BUTTON_START_STOP)) {
 //        Serial.println("stop de hele app");
+          totaal_gewerkt = totaal_gewerkt + werk_tijd;
           string_totaal_gewerkt = String(totaal_gewerkt);
           string_totaal_gepauzeerd = String(totaal_gepauzeerd);
           tijd_upload = string_totaal_gewerkt + " " + string_totaal_gepauzeerd;
