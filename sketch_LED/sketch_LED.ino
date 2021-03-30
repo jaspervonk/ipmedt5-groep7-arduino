@@ -13,6 +13,10 @@ bool gepauzeerd = false;
 int totaal_gewerkt = 0;
 int totaal_gepauzeerd = 0;
 
+String string_totaal_gewerkt = "";
+String string_totaal_gepauzeerd = "";
+String tijd_upload = "";
+
 int werk_tijd = 0;
 int pauze_tijd = 0;
 
@@ -105,6 +109,10 @@ void start_stop(){
       delay(10);
       if (!digitalRead(BUTTON_START_STOP)) {
 //        Serial.println("stop de hele app");
+          string_totaal_gewerkt = String(totaal_gewerkt);
+          string_totaal_gepauzeerd = String(totaal_gepauzeerd);
+          tijd_upload = string_totaal_gewerkt + " " + string_totaal_gepauzeerd;
+          Serial.println(tijd_upload);
         break;
         }        
       }
@@ -148,7 +156,7 @@ void pauze(){
 //      Serial.println("ik wil pauze breken");
       delay(10);
       if (!digitalRead(BUTTON_PAUZE)) {
-        totaal_gepauzeerd = totaal_gepauzeerd + werk_tijd;
+        totaal_gepauzeerd = totaal_gepauzeerd + pauze_tijd;
         pauze_tijd = 0;
         noTone(BUZZER);
         gepauzeerd = false;
