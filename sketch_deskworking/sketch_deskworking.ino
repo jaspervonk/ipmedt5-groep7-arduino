@@ -16,6 +16,9 @@ bool gepauzeerd = false;
 int totaal_gewerkt = 0;
 int totaal_gepauzeerd = 0;
 
+int aantal_pauzes = 0;
+String string_aantal_pauzes = "0";
+
 String string_totaal_gewerkt = "0";
 String string_totaal_gepauzeerd = "0";
 String tijd_upload = "0";
@@ -114,7 +117,8 @@ void start_stop(){
           totaal_gewerkt = totaal_gewerkt + werk_tijd;
           string_totaal_gewerkt = String(totaal_gewerkt);
           string_totaal_gepauzeerd = String(totaal_gepauzeerd);
-          tijd_upload = string_totaal_gewerkt + " " + string_totaal_gepauzeerd;
+          string_aantal_pauzes = String(aantal_pauzes);
+          tijd_upload = string_totaal_gewerkt + " " + string_totaal_gepauzeerd + " " + string_aantal_pauzes;
           Serial.println(tijd_upload);
         break;
         }        
@@ -125,6 +129,10 @@ void start_stop(){
     gestart = false;
     lcd.clear();
     lcd.print("gestopt");
+    aantal_pauzes = 0;
+    werk_tijd = 0;
+    totaal_gewerkt = 0;
+    totaal_gepauzeerd = 0;
     Serial.println("e");
     delay(1000);    
 }
@@ -136,6 +144,7 @@ void start_stop(){
 void pauze(){
   if (gestart == true && gepauzeerd == false){
     gepauzeerd = true;
+    aantal_pauzes = aantal_pauzes = 1;
     lcd.clear();
     lcd.print("pauze");
     Serial.println("p");
