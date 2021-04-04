@@ -134,7 +134,9 @@ void start_stop(){
     totaal_gewerkt = 0;
     totaal_gepauzeerd = 0;
     Serial.println("e");
-    delay(1000);    
+    delay(1000);
+    lcd.clear();
+    lcd.print("druk op START/STOP  om te beginnen");    
 }
 
 
@@ -144,7 +146,7 @@ void start_stop(){
 void pauze(){
   if (gestart == true && gepauzeerd == false){
     gepauzeerd = true;
-    aantal_pauzes = aantal_pauzes = 1;
+    aantal_pauzes = aantal_pauzes + 1;
     lcd.clear();
     lcd.print("pauze");
     Serial.println("p");
