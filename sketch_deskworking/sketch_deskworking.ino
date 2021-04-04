@@ -186,30 +186,43 @@ void bereken_minuten(int seconden){
 //  Serial.print(seconden);
 //  Serial.println(" seconden");
 
+  String string_seconden = "";
+  String string_minuten = "";
+  String string_uren = "";
+
   int minuten = seconden / 60;
-//  Serial.println(minuten);
+  seconden = seconden % 60;
+  int uren = minuten / 60;
+  minuten = minuten % 60;
+
+  if (uren < 10){
+    string_uren = String(uren);
+    string_uren = "0" + string_uren;
+    }
+  else{
+    string_uren = String(uren);
+    }
+
+
+  if (minuten < 10){
+    string_minuten = String(minuten);
+    string_minuten = "0" + string_minuten;
+    }
+  else{
+    string_minuten = String(minuten);
+    }
+
+
+  if (seconden < 10){
+    string_seconden = String(seconden);
+    string_seconden = "0" + string_seconden;
+    }
+  else{
+    string_seconden = String(seconden);
+    }
+
+  String hele_tijd = String(string_uren + " : " + string_minuten + " : " + string_seconden);
 
   lcd.clear();
-  lcd.print(seconden);
-
-//  if (minuten < 10){
-//    String deel_1 = "000";
-//    String deel_2 = String(minuten);
-//    String compleet = deel_1 + deel_2;
-//    lcd.print(compleet);
-//    }
-//
-//  else if (minuten < 100){
-//    String deel_1 = "00";
-//    String deel_2 = String(minuten);
-//    String compleet = deel_1 + deel_2;
-//    lcd.print(compleet);
-//    }
-//
-//  else if (minuten < 1000){
-//    String deel_1 = "000";
-//    String deel_2 = String(minuten);
-//    String compleet = deel_1 + deel_2;
-//    lcd.print(compleet);
-//    }
+  lcd.print(hele_tijd);
   }
