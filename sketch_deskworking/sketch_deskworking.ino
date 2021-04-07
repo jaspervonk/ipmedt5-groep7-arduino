@@ -9,7 +9,7 @@ const int LCD_ROWS = 4;
 const int BUTTON_START_STOP = 14;
 const int BUTTON_PAUZE = 15;
 
-const int BUZZER = 13;
+const int BUZZER = 8;
 
 bool gestart = false;
 bool gepauzeerd = false;
@@ -76,10 +76,10 @@ void start_stop(){
     gestart = true;
     lcd.print("start");
     Serial.println("s");
-    tone(BUZZER, 700);
+    digitalWrite(BUZZER, HIGH);
     delay(1000);
     lcd.clear();
-    noTone(BUZZER);
+    digitalWrite(BUZZER, LOW);
 
     while (true){
 //      Serial.println("in de start_stop");
@@ -92,7 +92,7 @@ void start_stop(){
 
           if (werk_tijd == max_werk_tijd){
             Serial.println("gp");
-            tone(BUZZER, 700);
+            digitalWrite(BUZZER, HIGH);
             }
           break;
           }
@@ -103,7 +103,7 @@ void start_stop(){
       if (!digitalRead(BUTTON_PAUZE)) {
         totaal_gewerkt = totaal_gewerkt + werk_tijd;
         werk_tijd = 0;
-        noTone(BUZZER);
+        digitalWrite(BUZZER, LOW);
         pauze(); /////// pauze()
 //        break;
         }        
@@ -163,7 +163,7 @@ void pauze(){
 
           if (pauze_tijd == max_pauze_tijd){
             Serial.println("gw");
-            tone(BUZZER, 700);
+            digitalWrite(BUZZER, HIGH);
             }
           break;
           }
@@ -175,7 +175,7 @@ void pauze(){
       if (!digitalRead(BUTTON_PAUZE)) {
         totaal_gepauzeerd = totaal_gepauzeerd + pauze_tijd;
         pauze_tijd = 0;
-        noTone(BUZZER);
+        digitalWrite(BUZZER, LOW);
         gepauzeerd = false;
         lcd.clear();
         lcd.print("werk hervat");
