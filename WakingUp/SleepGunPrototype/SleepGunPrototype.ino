@@ -16,7 +16,7 @@ LiquidCrystal_I2C lcd(i2c_address, 20, 4);
 
 // Game Rules
 const int targetGoal = 5;
-const int targetSpeed = 1000;
+const int targetSpeed = 5000;
 const int targetTimeBuffer = 50;
 const int targetTreshhold = 700;
 const int targetTimeBetween = 3000;
