@@ -35,25 +35,48 @@ void setup() {
   // functies om het lcd schermpje aan het werk te krijgen
   lcd.init();
   lcd.clear();         
-  lcd.backlight();      
+  lcd.backlight();
+  lcd.setCursor(2,0);
+  lcd.print("Daily Routine");
+  lcd.setCursor(6,1);
+  lcd.print("koken");    
 }
 
 void loop() {
   char customKey = customKeypad.getKey();
   // Wanneer je op B klikt kom je in een loop waarbij je een beoordeling kan kiezen en doorsturen naar laravel
   if (customKey == 'B'){
-    Serial.println('je kan nu beoordelen');
+    lcd.clear();
+    lcd.setCursor(4,0);
+    lcd.print("Geef een");
+    lcd.setCursor(2,1);
+    lcd.print("beoordeling!");
     while (beoordelen == 1){
       char customKey = customKeypad.getKey();
       // Alle cijfer keys om te beoordelen
-      if (customKey == '1'){
-        Serial.println("de knoppen werken in de while loop");
-      }
-      // Door op A van annuleren te klikken breek je de beoordelingsloop
       if (customKey == 'A'){
+        lcd.clear();
+        lcd.setCursor(1,0);
+        lcd.print("Beoordeling is");
+        lcd.setCursor(2, 1);
+        lcd.print("geannuleerd!");
         Serial.println("annuleren");
         break;
       }
+      
+      else if(customKey){
+        lcd.clear();
+        lcd.setCursor(2,0);
+        lcd.print("Goed gedaan!");
+        lcd.setCursor(1,1);
+        lcd.print("Beoordeling:");
+        lcd.setCursor(14,1);
+        lcd.print(customKey);
+        Serial.println(customKey);
+        Serial.println('b');
+        break;
+      }
+      // Door op A van annuleren te klikken breek je de beoordelingsloop
     }
   }
   // Wanneer je op C van clock klikt kun je de uren invoeren voor de timer
