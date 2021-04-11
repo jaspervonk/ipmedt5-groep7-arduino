@@ -10,6 +10,10 @@ const int BUTTON_START_STOP = 14;
 const int BUTTON_PAUZE = 15;
 
 const int BUZZER = 8;
+const int sensorPin = A2;
+
+int sensor_value;
+bool sensor_gedrukt = false;
 
 bool gestart = false;
 bool gepauzeerd = false;
@@ -25,6 +29,7 @@ String tijd_upload = "0";
 
 int werk_tijd = 0;
 int pauze_tijd = 0;
+int sensor_tijd = 0;
 
 int max_werk_tijd_minuten = 120;
 int max_pauze_tijd_minuten = 15;
@@ -33,6 +38,7 @@ int max_pauze_tijd = max_pauze_tijd_minuten * 60;
 
 
 float startms = 0;
+float sensor_startms = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -58,6 +64,8 @@ void setup() {
 }
 
 void loop() {
+//  check_sensor();
+  
   if (!digitalRead(BUTTON_START_STOP)){
     delay(200);
     if (!digitalRead(BUTTON_START_STOP)) {
@@ -65,6 +73,8 @@ void loop() {
       start_stop();
       }
   }
+
+  delay(500);
 }
 
 
@@ -237,3 +247,43 @@ void bereken_minuten(int seconden){
   lcd.clear();
   lcd.print(hele_tijd);
   }
+
+
+//=========================================================================
+void check_sensor(){
+  sensor_value = analogRead(sensorPin);
+//  Serial.println(sensor_value);
+
+  if(sensor_value > 200){
+    sensor_gedrukt = true;
+    sensor_tijd = 0;
+//    Serial.print(sensor_value);
+//    Serial.println(" sensor gedrukt");
+//    digitalWrite(BUZZER , LOW);
+    }
+  else{
+    sensor_startms = millis();
+    sensor_gedrukt = false;
+      while (sensor_gedrukt == false){
+        if (millis() >= (sensor_startms + 1000)){
+          sensor_tijd = sensor_tijd + 1;
+          delay(500);
+
+          if (sensor_tijd >= 5){
+//            Serial.print(sensor_value);
+//            Serial.println(" Sensor los");
+//          digitalWrite(BUZZER , HIGH);
+            lcd.clear();
+            lcd.print("checken of iemand zit");
+            sensor_value = analogRead(sensorPin);
+          
+            if (sensor_value > 200){
+              sensor_startms = millis();
+              sensor_gedrukt = true;
+              }
+          }
+        }
+    }
+  }
+}
+  
