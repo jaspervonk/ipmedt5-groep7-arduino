@@ -2,20 +2,21 @@
 #include <LiquidCrystal_I2C.h>
 
 // Pin Setup
-const int unconnectedPin = A7;
-
-const int blackTarget = A0;
+const int blackTarget = A7;
 const int blackLED = A3;
 
 const int whiteTarget = A1;
 const int whiteLED = A2;
+
+const int redTarget = A6;
+const int redLED = A0;
 
 const int en = 2, rw = 1, rs = 0, d4 = 4, d5 = 5, d6 = 6, d7 = 7, bl = 3;
 const int i2c_address = 0x27;
 LiquidCrystal_I2C lcd(i2c_address, 20, 4);
 
 // Game Rules
-const int targetGoal = 5;
+const int targetGoal = 10;
 const int targetSpeed = 3000;
 const int targetTimeBuffer = 50;
 const int targetTreshhold = 700;
@@ -45,13 +46,16 @@ int piSignalRaw = '0';
 void setup() {
   Serial.begin(9600);
 
-  randomSeed(analogRead(A7));
-
   pinMode(blackTarget, INPUT);
   pinMode(blackLED, OUTPUT);
   
   pinMode(whiteTarget, INPUT);
   pinMode(whiteLED, OUTPUT);
+
+  pinMode(redTarget, INPUT);
+  pinMode(redLED, OUTPUT);
+
+  randomSeed(analogRead(blackTarget));
   
   // Show startup on LCD display
   lcd.init();
@@ -69,8 +73,11 @@ void loop() {
     }
   }
 
+  
+
   // If the signal was 1 -> Play SleepGun Code
   if(piSignalRaw == '1'){
+    Serial.println(piSignalRaw);
     // = LCD Feedback =
     lcd.backlight();
     lcd.setCursor(2,0);
@@ -93,7 +100,7 @@ void loop() {
       
     while(targetHits < targetGoal){
       // Choose a random Target
-      selectedTarget = random(1, 3);
+      selectedTarget = random(1, 4);
     
       // Calculate the amount of time the target is active
       targetTime = targetSpeed;
@@ -113,6 +120,11 @@ void loop() {
         if(selectedTarget == 2){
           targetValue = analogRead(whiteTarget);
           digitalWrite(whiteLED, HIGH);
+        }
+
+        if(selectedTarget == 3){
+          targetValue = analogRead(redTarget);
+          digitalWrite(redLED, HIGH);
         }
         
         // If the target has been hit. Else remove time and wait the targetTimeBuffer
@@ -143,6 +155,7 @@ void loop() {
       // Wait
       digitalWrite(blackLED, LOW);
       digitalWrite(whiteLED, LOW);
+      digitalWrite(redLED, LOW);
       delay(targetTimeBetween);
     }
   
@@ -159,13 +172,13 @@ void loop() {
       lcd.print("Good Morning!");
       lcd.setCursor(3,2);
       lcd.print("Calculating");
-      delay(1000);
+      delay(300);
       lcd.print(".");
-      delay(1000);
+      delay(300);
       lcd.print(".");
-      delay(1000);
+      delay(300);
       lcd.print(".");
-      delay(3000);
+      delay(100);
   
       // = LCD Feedback =
       lcd.clear();
