@@ -7,7 +7,6 @@ const int LCD_COLS = 20;
 const int LCD_ROWS = 4;
 
 const int BUTTON_START_STOP = 14;
-const int BUTTON_PAUZE = 15;
 
 const int BUZZER = 8;
 const int sensorPin = A2;
@@ -43,7 +42,7 @@ void setup() {
   Serial.begin(9600);
 
   int status;
-  status = lcd.begin(LCD_COLS, LCD_ROWS);
+  status = lcd.begin(20, 4);
   if(status) // non zero status means it was unsuccesful
   {
     hd44780::fatalError(status); // does not return
@@ -52,21 +51,20 @@ void setup() {
 
   
   pinMode(BUTTON_START_STOP, INPUT_PULLUP);
-  pinMode(BUTTON_PAUZE, INPUT_PULLUP);
   pinMode(BUZZER, OUTPUT);
-  
+
   lcd.clear();
   lcd.print("druk op START/STOP  om te beginnen");
+  lcd.backlight();
   Serial.println("e");
 //  lcd.clear();
   delay(1000);
 }
 
-void loop() {
-//  check_sensor();
+void loop() {;
   sensor_value = analogRead(sensorPin);
-//  Serial.println(sensor_value);
-  
+
+  // Als de Start knop wordt ingedrukt, start de applicatie
   if (!digitalRead(BUTTON_START_STOP)){
     delay(200);
     if (!digitalRead(BUTTON_START_STOP)) {
@@ -76,6 +74,7 @@ void loop() {
   }
 
   delay(500);
+
 }
 
 
@@ -92,15 +91,15 @@ void start_stop(){
     lcd.clear();
     digitalWrite(BUZZER, LOW);
 
+    //De timerunctie voor de werktijd
     while (true){
-//      Serial.println("in de start_stop");
       startms = millis();
       while (true){        
         if (millis() >= (startms + 1000)){
           werk_tijd = werk_tijd + 1;
-//          Serial.println(werk_tijd);
-          bereken_minuten(werk_tijd);
+          bereken_minuten(werk_tijd); //Werktijd wordt gestuurd naar- en berekend in berekenminuten()
 
+          //Max-tijd waarschuwfunctie
           if (werk_tijd == max_werk_tijd){
             Serial.println("gp");
             digitalWrite(BUZZER, HIGH);
@@ -109,18 +108,20 @@ void start_stop(){
           }
         }
 
-    sensor_value = analogRead(sensorPin);
-    //    Serial.println(sensor_value);
 
+    //De condition loops om in de timerfucntie van de druksenosr te komen
+    sensor_value = analogRead(sensorPin);
     if (sensor_value > 200){
       sensor_bijhouden = false;
       }
-    
+
     if (sensor_value < 200 && sensor_bijhouden == false){
       sensor_startms = millis();
       sensor_bijhouden = true;
       }
 
+
+    //De tierfunctie van 5 seconden van de druksensor
     if (sensor_value < 200 && millis() >= (sensor_startms + 5000)){
         totaal_gewerkt = totaal_gewerkt + werk_tijd;
         werk_tijd = 0;
@@ -128,18 +129,8 @@ void start_stop(){
         pauze();
       }
 
-//    if (!digitalRead(BUTTON_PAUZE)){
-//      delay(10);
-//      if (!digitalRead(BUTTON_PAUZE)) {
-//        totaal_gewerkt = totaal_gewerkt + werk_tijd;
-//        werk_tijd = 0;
-//        digitalWrite(BUZZER, LOW);
-//        pauze(); /////// pauze()
-////        break;
-//        }        
-//      }
 
-
+      //functie om de sessie te beëindigen
       if (!digitalRead(BUTTON_START_STOP)){
       delay(10);
       if (!digitalRead(BUTTON_START_STOP)) {
@@ -148,14 +139,15 @@ void start_stop(){
           string_totaal_gewerkt = String(totaal_gewerkt);
           string_totaal_gepauzeerd = String(totaal_gepauzeerd);
           string_aantal_pauzes = String(aantal_pauzes);
-          tijd_upload = string_totaal_gewerkt + " " + string_totaal_gepauzeerd + " " + string_aantal_pauzes;
+          tijd_upload = string_totaal_gewerkt + " " + string_totaal_gepauzeerd + " " + string_aantal_pauzes; //alle waardes worden netjes op een rijtje gezet zodat de python het kan uitlezen
           Serial.println(tijd_upload);
         break;
         }        
       }
     }
   }
-   
+
+    //Alle variabelen worden weer gerest, sessie word afgesloten
     gestart = false;
     lcd.clear();
     lcd.print("gestopt");
@@ -182,9 +174,9 @@ void pauze(){
     Serial.println("p");
     delay(1000);
     lcd.clear();
-    
+
+    //Timerfunctie pauzes    
     while (true){
-//      Serial.println("in de pauze");
       startms = millis();
       while (true){        
         if (millis() >= (startms + 1000)){
@@ -199,8 +191,8 @@ void pauze(){
           }
         }
 
+    //Bij hoge waarde pauze beëindigen
     sensor_value = analogRead(sensorPin);
-//    Serial.println(sensor_value);
     if (sensor_value > 200){
       totaal_gepauzeerd = totaal_gepauzeerd + pauze_tijd;
         pauze_tijd = 0;
@@ -213,23 +205,6 @@ void pauze(){
         lcd.clear();
         break;
     }
-    
-//    if (!digitalRead(BUTTON_PAUZE)){
-////      Serial.println("ik wil pauze breken");
-//      delay(10);
-//      if (!digitalRead(BUTTON_PAUZE)) {
-//        totaal_gepauzeerd = totaal_gepauzeerd + pauze_tijd;
-//        pauze_tijd = 0;
-//        digitalWrite(BUZZER, LOW);
-//        gepauzeerd = false;
-//        lcd.clear();
-//        lcd.print("werk hervat");
-//        Serial.println("r");
-//        delay(1000);
-//        lcd.clear();
-//        break;
-//        }        
-//      }
 
     }
     }
@@ -240,9 +215,6 @@ void pauze(){
 //=========================================================================
 
 void bereken_minuten(int seconden){
-//  Serial.print(seconden);
-//  Serial.println(" seconden");
-
   String string_seconden = "";
   String string_minuten = "";
   String string_uren = "";
@@ -282,6 +254,8 @@ void bereken_minuten(int seconden){
 
   lcd.clear();
   lcd.print(hele_tijd);
+
+
   }
 
   
